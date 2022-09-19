@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Redux</title>
+    <script src="./redux.min.js"></script>
+  </head>
+  <body>
+    <div>
+      <h1>Total: <span id="total"></span></h1>
+      <button id="increment">incrementar</button>
+      <button id="somar">somar</button>
+      <button id="reduzir">reduzir</button>
+    </div>
+
+    <script>
+      // Constantes
+      const INCREMENT = 'INCREMENT';
+      const SOMAR = 'SOMAR';
+      const REDUZIR = 'REDUZIR';
+      const initialState = 0;
+
+      // REDUCERS
+      function contador(state = initialState, action) {
+        switch (action.type) {
+          case INCREMENT:
+            return state + 1;
+          case SOMAR:
+            return state + action.payload;
+          case REDUZIR:
+            return state - action.payload;
+          default:
+            return state;
+        }
+      }
+      
+      function modal(state = false, action) {
+        switch (action.type) {
+          case 'ABRIR':
+            return true;
+          case 'FECHAR':
+            return false;
+          default:
+            return state;
+        }
+      }
+
+      // Action Creators
+      function increment() {
+        return { type: INCREMENT };
+      }
+
+      function somar(payload) {
+        return { type: SOMAR, payload };
+      }
+
+      function reduzir(payload) {
+        return { type: REDUZIR, payload };
+      }
+
+      // aplicação
+      const reducer = Redux.combineReducers({ contador, modal });
+      const store = Redux.createStore(reducer);
+
+      function render() {
+        const {contador, modal} = store.getState();
+        const total = document.getElementById('total');
+        total.innerText = contador;
+      }
+
+      render();
+      store.subscribe(render);
+
+      const btnIncrement = document.getElementById('increment');
+      btnIncrement.addEventListener('click', () => store.dispatch(increment()));
+
+      const btnSum = document.getElementById('somar');
+      btnSum.addEventListener('click', () => store.dispatch(somar(10)));
+
+      const btnReduce = document.getElementById('reduzir');
+      btnReduce.addEventListener('click', () => store.dispatch(reduzir(5)));
+    </script>
+  </body>
+</html>
